@@ -37,13 +37,11 @@ class ClienteController extends Controller
 
     public function update(Request $request, $id)
     {
-        $cliente=Cliente::find($id);
-        if($cliente){
-            $cliente=$cliente->update($request->all());
-            return response()->json($cliente);
-        }
-        else
-        return response()->json('Usuario no Encontrado',409);
+        $problema=Cliente::find($id);
+        if (!$problema)
+            return response()->json("Este cliente no existe",400);
+        $problema->update($request->all());
+        return $this->index();
     }
 
     public function destroy($id)
@@ -51,9 +49,7 @@ class ClienteController extends Controller
         $cliente=Cliente::find($id);
         if($cliente){
             $cliente->delete();
-            return response()->json($cliente);
         }
-        else
-        return response()->json('Usuario no Encontrado',409);
+        return $this->index();
     }
 }

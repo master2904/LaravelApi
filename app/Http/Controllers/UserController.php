@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
-
+use Auth;
 
 class UserController extends Controller
 {
@@ -45,21 +45,18 @@ class UserController extends Controller
         $user=User::find($id);
         if($user){
             $user=$user->update($request->all());
-            return response()->json($user);
         }
-        else
-        return response()->json('Usuario no Encontrado',409);
+        return $this->index();
     }
 
     public function destroy($id)
     {
         $user=User::find($id);
-        if($user){
-            $user->delete();
-            return response()->json($user);
+        if(!$user){
+            return response()->json('usuario no encontrado',400);
         }
-        else
-        return response()->json('Usuario no Encontrado',409);
+        $user->delete();
+        return $this->index();
     }
     public function roles($rol){
         $users=User::Roles($rol);
@@ -79,5 +76,13 @@ class UserController extends Controller
     }
     public function image($nombre){
         return response()->download(public_path('storage').'/usuario/'.$nombre,$nombre);
+    }
+    public function login($request){
+        return response()->json($request);
+        // if($user=Auth::attempt(['username'=>$request['username'],'password'=>$request['password']])){
+        //     // $user=User::where($request['username']);
+        //     // $user->createToken();
+        //     return response()->json($user);
+        // }
     }
 }
